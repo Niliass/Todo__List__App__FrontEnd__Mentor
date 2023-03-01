@@ -1,0 +1,317 @@
+@use "./sass/base/reset";
+
+@use "./sass/abstracts/" as *;
+
+.light {
+  .App {
+    background-color: $l-v-l-gray;
+  }
+  .todo__theme {
+    &--light {
+      opacity: 0;
+    }
+    &--dark {
+      opacity: 1;
+    }
+  }
+  .task__form,
+  .inner__container {
+    box-shadow: 0 35px 40px 0 rgb($l-d-grayish-blue, 0.33);
+  }
+  %bg {
+    background-color: $white;
+  }
+  .task {
+    &,
+    &__form,
+    &__filter,
+    &__state::before {
+      @extend %bg;
+    }
+    &.dragging {
+      background-color: darken($white, 10%);
+    }
+    &:not(:first-of-type),
+    &__filter {
+      border-top-color: $l-l-grayish-blue;
+    }
+    &__form input[name="task"],
+    &__title {
+      color: $l-v-d-grayish-blue;
+    }
+    &__form input[name="task"]::placeholder {
+      color: $l-d-grayish-blue;
+    }
+    &__state {
+      border-color: $l-l-grayish-blue;
+    }
+  }
+  .completed + .task__title {
+    color: $l-l-grayish-blue;
+    &::before {
+      background-color: $l-d-grayish-blue;
+    }
+  }
+  .filter__btns__outer {
+    @extend %bg;
+  }
+  .bg__dark {
+    opacity: 0;
+  }
+}
+
+.App {
+  background-color: $d-v-d-blue;
+  min-height: 100vh;
+  isolation: isolate;
+  transition: $trans;
+  overflow: hidden;
+}
+.container {
+  padding-inline: 1.5rem;
+  padding-block: 5rem 3rem;
+  max-width: 550px;
+  margin: auto;
+  @include media($xxl) {
+    padding-top: 12rem;
+  }
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  .todo {
+    &__title {
+      color: $white;
+      font-size: clamp(1.5rem, 8vw, 2.5rem);
+      text-transform: uppercase;
+      letter-spacing: clamp(0.6rem, 3vw, 1rem);
+    }
+    &__theme {
+      &__btn {
+        position: relative;
+      }
+      &--light,
+      &--dark {
+        transition: $trans;
+      }
+      &--light {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      &--dark {
+        opacity: 0;
+      }
+    }
+  }
+}
+.task {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  color: $d-l-grayish-blue;
+  background-color: $d-v-d-desaturated-blue;
+  transition: $trans;
+  position: relative;
+  &:hover {
+    color: $d-l-grayish-blue-hover;
+    .task__delete {
+      opacity: 1;
+    }
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    background-color: inherit;
+  }
+  &.dragging::before {
+    z-index: 1;
+    opacity: 0.7;
+  }
+  &.dragging-c {
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    transition: unset;
+  }
+  &.over {
+    margin-top: 1rem;
+  }
+  &:not(:first-of-type),
+  &__filter {
+    border-top: 1px solid $d-v-d-grayish-blue-seconde;
+  }
+  &__title {
+    font-size: 1rem;
+    font-weight: 500;
+    position: relative;
+    margin-right: auto;
+    transition: $trans;
+    &::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      height: 1px;
+      width: 100%;
+      background-color: hsl(234, 11%, 52%);
+      opacity: 0;
+      transform: translateY(-50%);
+    }
+    &::first-letter {
+      text-transform: uppercase;
+    }
+    .completed + & {
+      color: $d-v-d-grayish-blue-first;
+      &::before {
+        opacity: 1;
+      }
+    }
+  }
+  &__delete {
+    opacity: 0;
+    transition: $trans;
+  }
+  &__form {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background-color: $d-v-d-desaturated-blue;
+    padding-inline: 1rem;
+    border-radius: $rad;
+    box-shadow: 0 8px 15px rgb($d-v-d-desaturated-blue, 0.7);
+    transition: $trans;
+    input[name="task"] {
+      padding-block: 1rem;
+      flex: 1;
+      color: $d-l-grayish-blue;
+      font: {
+        size: clamp(0.3rem, 4vw, 1rem);
+        family: inherit;
+      }
+      &::placeholder {
+        color: $d-v-d-grayish-blue-first;
+        transition: $trans;
+      }
+      &:focus::placeholder {
+        opacity: 0;
+      }
+    }
+  }
+  &__state {
+    display: grid;
+    place-items: center;
+    position: relative;
+    width: 25px;
+    height: 25px;
+    padding: 0.4rem;
+    border: 1px solid $d-v-d-grayish-blue-first;
+    cursor: pointer;
+    border-radius: 50%;
+    &.completed,
+    &:hover {
+      background: $check-bg;
+    }
+    &::before {
+      content: "";
+      position: absolute;
+      width: 95%;
+      height: 95%;
+      background-color: $d-v-d-desaturated-blue;
+      border-radius: 50%;
+      transition: $trans;
+    }
+    &.completed::before {
+      opacity: 0;
+    }
+  }
+  &__filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background-color: $d-v-d-desaturated-blue;
+    transition: $trans;
+  }
+}
+.inner__container {
+  color: $d-d-grayish-blue;
+  margin-top: 1rem;
+  border-radius: $rad;
+  box-shadow: 0 35px 40px 0 rgb(black, 0.33);
+  transition: $trans;
+}
+.tasks__list {
+  min-height: 56px;
+  position: relative;
+  touch-action: none;
+}
+.length__items {
+  font-size: 0.8rem;
+}
+.clear__btn {
+  transition: $trans;
+  &:hover {
+    color: $b-blue;
+  }
+}
+.filter__btns,
+.filter__btns__outer {
+  display: flex;
+  gap: 1rem;
+  color: $d-d-grayish-blue;
+}
+.filter__btns__outer {
+  place-content: center;
+  background-color: $d-v-d-desaturated-blue;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 5px;
+}
+.filter__btn {
+  font: {
+    weight: bold;
+    size: 0.8rem;
+  }
+  @extend .clear__btn;
+}
+.drag__text {
+  color: $d-d-grayish-blue;
+  text-align: center;
+  font-size: 0.8rem;
+  margin-top: 2.5rem;
+}
+.bg {
+  position: absolute;
+  top: 0;
+  z-index: -1;
+  width: 100%;
+  height: 40vh;
+  &__dark,
+  &__light {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    transition: $trans;
+    &--desk {
+      display: none;
+    }
+    @include media($md) {
+      &--desk {
+        display: block;
+      }
+      &--mob {
+        display: none;
+      }
+    }
+  }
+}
